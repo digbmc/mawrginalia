@@ -1,0 +1,111 @@
+---
+title: "visualizations-practice-4-27"
+author: "Alice McGrath"
+date: "4/27/2020"
+output: html_document
+runtime: shiny
+---
+
+# Catherine's code 4-27-20
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(plotly)
+data<-read.csv("coldata.csv",header=TRUE)
+attach(data)
+```
+
+``` {r}
+data2<-table(Subclass,Interventions)
+data3<-data.frame(data2)
+subclassCount<-data3[,3]
+falseSubclass<-subclassCount[2:25]
+trueSubclass<-subclassCount[27:50]
+subclass<-unique(data3[,1])
+subclass<-subclass[subclass!=""]
+data4<-data.frame(subclass,falseSubclass,trueSubclass)
+```
+## Figure 1 
+Interventions by Subclass
+
+```{r, include=FALSE}
+fig <- plot_ly(data4, x = ~subclass, y = ~falseSubclass, type = 'bar', name = 'FALSE')
+fig <- fig %>% add_trace(y = ~trueSubclass, name = 'TRUE')
+fig <- fig %>% layout(yaxis = list(title = 'Interventions'), barmode = 'stack')
+```
+```{r}
+fig
+```
+
+##  Figure 2
+Interventions by decade
+
+``` {r}
+data5<-table(Decade,Interventions)
+data6<-data.frame(data5)
+decadeCount<-data6[,3]
+decadeFalse<-decadeCount[2:18]
+decadeTrue<-decadeCount[20:36]
+decade<-unique(data6[,1])
+decade<-decade[decade!=""]
+
+fig2<-plot_ly(data6, x = ~decade, y = ~decadeFalse, type = 'bar', name = 'FALSE')
+fig2<- fig2%>% add_trace(y = ~decadeTrue, name = 'TRUE')
+fig2<-fig2%>% layout(yaxis = list(title = 'Interventions'), barmode = 'stack')
+
+```
+
+```{r}
+fig2
+```
+
+## Instructions for Shiny 
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+
