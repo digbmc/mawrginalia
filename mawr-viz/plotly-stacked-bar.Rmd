@@ -51,10 +51,11 @@ decadeTrue<-decadeCount[20:36]
 decade<-unique(data6[,1])
 decade<-decade[decade!=""]
 
-fig2<-plot_ly(data6, x = ~decade, y = ~decadeFalse, type = 'bar', name = 'FALSE')
-fig2<- fig2%>% add_trace(y = ~decadeTrue, name = 'TRUE')
-fig2<-fig2%>% layout(yaxis = list(title = 'Interventions'), barmode = 'stack')
-
+fig2<-plot_ly(data6, x = ~decade, y = ~decadeFalse, type = 'bar', name = 'Without markings')
+fig2<- fig2%>% add_trace(y = ~decadeTrue, name = 'With markings')
+fig2<-fig2%>% layout(yaxis = list(title = 'Number of books'), barmode = 'stack')
+fig2<-fig2%>% layout(xaxis = list(title = 'Publication date'))
+                     
 ```
 
 ```{r}
