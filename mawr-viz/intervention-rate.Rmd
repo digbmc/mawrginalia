@@ -1,0 +1,92 @@
+---
+title: "Intervention Rate"
+author: "Alice McGrath"
+date: "5/14/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Intervention rate
+
+Stacked bar chart with button to toggle between Language, Subclass, and Publication Decade
+
+```{r include=FALSE}
+
+library(plotly)
+data<-read.csv("data/all-data.csv",header=TRUE)
+attach(data)
+```
+
+```{r include=FALSE}
+data2<-table(Subclass,Interventions)
+data2<-data.frame(data2)
+subclassCount<-data2[,3]
+falseSubclass<-subclassCount[1:24]
+trueSubclass<-subclassCount[25:48]
+subclass<-unique(data2[,1])
+subclassData<-data.frame(subclass,falseSubclass,trueSubclass)
+data3<-table(Decade2,Interventions)
+data3<-data.frame(data3)
+decadeCount<-data3[,3]
+decadeFalse<-decadeCount[1:15]
+decadeTrue<-decadeCount[16:30]
+decade<-unique(data3[,1])
+decadeData<-data.frame(decade,decadeFalse,decadeTrue)
+data4<-table(Language,Interventions)
+data4<-data.frame(data4)
+languageCount<-data4[,3]
+falseLanguage<-languageCount[1:12]
+trueLanguage<-languageCount[13:24]
+language<-unique(data4[,1])
+languageData<-data.frame(language,falseLanguage,trueLanguage)
+
+fig<-plot_ly(subclassData, x = ~subclass, y = ~falseSubclass, type = 'bar', name = 'FALSE')
+fig<- fig%>% add_trace(y = ~trueSubclass, name = 'TRUE')
+fig<- fig%>% add_trace(decadeData, x = ~decade, y = ~decadeFalse,name = 'FALSE')
+fig<- fig%>% add_trace(decadeData, x = ~decade, y = ~decadeTrue,name = 'TRUE')
+fig<- fig%>% add_trace(languageData, x = ~language, y = ~falseLanguage,name = 'FALSE')
+fig<- fig%>% add_trace(languageData, x = ~language, y = ~trueLanguage,name = 'TRUE')
+# fig<-fig%>% layout(xaxis = list(title = '')) 
+
+
+updatemenus<-list(
+  list(active=-1,
+       type= 'buttons',
+       buttons = list(
+         list(
+           label="Subclass",
+           method = "update",
+           args = list(list(visible = c(TRUE, TRUE, FALSE,FALSE,FALSE, FALSE)),
+                   list(title = "Subclass"))),
+         list(
+           label="Decade",
+           method = "update",
+           args = list(list(visible = c(FALSE, FALSE, TRUE, TRUE, FALSE, FALSE)),
+          list(title = "Decade"))),
+         
+         list(
+           label="Language",
+           method = "update",
+           args = list(list(visible = c(FALSE,FALSE,FALSE, FALSE, TRUE, TRUE)),
+                       list(title = "Language"))),
+         list(
+           label="Reset",
+           method = "update",
+           args = list(list(visible = c(TRUE,TRUE,TRUE, TRUE, TRUE, TRUE)),
+                       list(title = "Reset")))
+         
+         )
+         
+         )
+       )
+
+fig <- fig %>% layout(yaxis = list(title = 'Interventions'), barmode = 'stack',updatemenus=updatemenus)
+```
+
+```{r echo=FALSE}
+fig
+
+```
+

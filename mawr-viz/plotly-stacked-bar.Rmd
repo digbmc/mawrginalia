@@ -2,7 +2,7 @@
 title: "plotly-stacked-bar"
 author: "clin1"
 date: "4/27/2020"
-output: html_document
+output: html_notebook
 runtime: shiny
 ---
 
@@ -13,7 +13,7 @@ Catherine Lin 4-27-20
 knitr::opts_chunk$set(echo = TRUE)
 
 library(plotly)
-data<-read.csv("coldata.csv",header=TRUE)
+data<-read.csv("data/coldata.csv",header=TRUE)
 attach(data)
 ```
 
@@ -28,6 +28,7 @@ trueSubclass<-subclassCount[27:50]
 subclass<-unique(data3[,1])
 subclass<-subclass[subclass!=""]
 data4<-data.frame(subclass,falseSubclass,trueSubclass)
+# add labels for subclasses 
 ```
 ## Fig. 1: Interventions by Subclass
 
